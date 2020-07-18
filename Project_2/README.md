@@ -1,0 +1,67 @@
+# ![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png)
+
+# Project 2: Ames Housing Data and Kaggle Challenge
+
+## Problem Statement
+Given the Ames housing dataset, create a regression model that predicts the price of houses in Ames, Iowa. The dataset contains information from Ames Assessor's office used in computing assessed values for individual residential properties sold in Ames, Iowa, from 2006 to 2010. The goal is to build a regression model to predict the sale price of each house at sale. For each Id in the test set, I must predict the value of the sale price variable.
+
+## Executive Summary
+
+The goal in this project is creating a regression model based on Ames Housing Dataset. This model will predict the price of a house at sale. The Ames Housing dataset is an exceptionally detailed and robust dataset with over 80 columns of different features relating to houses. Details of the datasets can be find here [data description](http://jse.amstat.org/v19n3/decock/DataDocumentation.txt).
+
+The machine learning method used in this project is supervised linear regression.
+
+The train dataset given has the target that the model suppose to predict, which is the housing sale price. This dataset is used to generate and train the regression model. Technique use including train-test split, cross-validation, and regularization. R2 score (coefficient of determination) is use to evaluate the model, where it measure how much percentage of the target is able to explained by the regression model.
+
+Once the model is consider to be able to generalize to un-seen data, it will use to predict the test dataset to predict the housing sale price.
+
+
+### 1. Exploratory Data Analysis (EDA)
+- Look at the data distribution of the target (SalePrice) and numeric features (predictors) using histogram.
+- Look at how the features correlate with target by using scatter plots for continuous predictors and box plots for categorical features.
+- Read the [data description](http://jse.amstat.org/v19n3/decock/DataDocumentation.txt). to understand each and every predictors representing.
+_ It was found that multicollinearity observed on the highly correlated features. In addition, redundancy on some of the features found as they are describing the same thing but in different metrics. For example, the garage size is measure in square feet and in car capacity.
+
+### 2. Data Cleaning
+- Identify outliers and technique used in treating them are transformation by taking the natural log of the value, which greatly reduces the variation. Also found an outlier that is due to wrong data entry and was treated accordingly.
+- Identify missing values. There are 3 major groups of missing value. The first group is with feature does not actually have that attribute in the house. For example, garage type with data entry `NaN` means no garage according to data description. Thus, impute this type of missing value as `None` instead of `NaN`. Second missing value group is related to first group, which its corresponding continuous attribute, for example `garage area` will impute with `0` instead of `NaN`.
+- Convert non-numeric ordinal feature to numeric by assigning integer values of 0,1,2,3 and so on respectively based on the description from data description.
+- Feature engineered the data by combining two or more features. For example combine the size for basement, first floor and second floor into one single feature, combine the number of bath room in the house and basement, and etc.
+- Remodel feature to reference to another feature. Garage built date is change to indicate either garage is build during the housing construction date or after construction date, instead of giving the year itself.
+- Interaction terms is added to two separate feature like the basement quality and basement condition.
+- Last step in this section is manually drop redundancy feature (`Garage Area` and keep `Garage car`), as well as those features that went through the feature engineering (combination, interaction).
+
+### 3. Data Pre-processing
+- Identify the categorical non-numeric features and using turning them into numeric values using `LabelEnconder()` from sklearn's preprocessing model.
+- Train/test split the train dataset. The training data is used to train and model and testing data is use to check is the model able to generalize for un-seen data.
+- Scale the train and test data. This is important step to avoid model being dominate by large magnitude feature. In addition, this is needed with Lasso and Ridge regression modelling.
+
+### 4. Modelling
+- `LinearRegression`, `LassoCV`, and `RidgeCV` are used in `cross_val_score` to study which model is better, by calculating the R2 score.
+- `LinearRegression` perform badly as it is probably it was fit with huge number of features and multicollinearity exist as well.
+- `Lasso` and `Ridge` perform equally much better than `LinearRegression`.
+- `Lasso` is selected to proceed with the modelling as it is great in zeroing out the less significant features. Find the optimal hyperparameter, alpha through `LassoCV` and use the optimal alpha to fit the model. The R2 score in test data is close to the R2 score in train data, which it gives the indication that the model is able to generalize well with future data.
+
+### 5. Inferential Visualization
+- Lasso regression zeroing out about 26% of the features, where it takes 62 features and drop 22 features.
+- The residuals are randomly scatter around the zero horizontal line with small magnitude, which is good. It indicates that the model is predicting the target well.
+
+### 6. Summary
+#### Top 5 features with positive impact to housing SalePrice in Ames Iowa
+Housing's size (living area in square feet) top the list as the most significant value added feature to housing price.
+Overall material and finish and overall condition of the house come in as second and fourth.
+Timeline of the house is built is also value added to SalePrice with more recently built housing sold at higher price.
+Basement finish (type 1) is also one of the key factor to add value to the SalePrice.
+Other factor that has positive impact to SalePrice including the garage size, total number of full bathrooms, home functionality, kitchen and heating quality condition.
+
+#### Features with negative impact to housing SalePrice
+Location of the housing, in terms of the general zoning of the housing has negative impact. Agriculture and commercial and the top two features with negative impact on housing Price. The type of housing (MS SubClass) is also has some negative impact to SalePrice.
+
+#### Neighborhoods with positive impact to housing SalePrice
+Northridge Heights and Stone Brook, are the two neighborhoods that could be a good investment, as they has positive impact to housing SalePrice.
+
+### 7. Business Recommendations
+Size of housing is always the key to housing SalePrice, as normally buyer will evaluate the price per square feet of a house. Housing age is important factor as newer house (recently built house) has higher SalePrice. Based on the model, good maintenance of the housing can greatly improve its value as well. This means, the overall material and finish, the condition, functionality, kitchen & heating quality of the house contribute to positive impact to SalePrice. Another key factor that influence the SalePrice is the basement and garage. Better basement condition, bigger size basement, garage with large car capacity increase the housing value.
+One factor that cannot be neglected is that the general zoning of the housing has some impact on the SalePrice as well. Housing at Agriculture and Commercial estate tends to has lower value in their pricing.
+
+`
